@@ -112,35 +112,38 @@ public abstract class DetailsPanelModel<ModelType extends Observable> extends Ob
 	@SuppressWarnings("unchecked")
 	public void setModel(final ModelType objModel)
 	{
-		if(mObjModel != null)
-			mObjModel.deleteObservers();
-		
-		if(objModel == null)
-			mObjModel = createNewModel();
-		else
-			mObjModel = objModel;
-		
-		try
+		if(objModel != mObjModel)
 			{
-			Method funcClone = mObjModel.getClass().getMethod("clone", new Class<?>[0]);
-			ModelType objClone;
+			if(mObjModel != null)
+				mObjModel.deleteObservers();
 			
-			if(!funcClone.isAccessible())
-				funcClone.setAccessible(true);
-			
-			objClone = ((ModelType)(funcClone.invoke(mObjModel, new Object[0])));
-			
-			setWorkingModel(objClone);
-			}
-		catch(IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException objException)
-			{
-			objException.printStackTrace(System.err);
-			}
+			if(objModel == null)
+				mObjModel = createNewModel();
+			else 
+				mObjModel = objModel;
 		
-		addModelObservers();
+			try
+				{
+				Method funcClone = mObjModel.getClass().getMethod("clone", new Class<?>[0]);
+				ModelType objClone;
+				
+				if(!funcClone.isAccessible())
+					funcClone.setAccessible(true);
+				
+				objClone = ((ModelType)(funcClone.invoke(mObjModel, new Object[0])));
+				
+				setWorkingModel(objClone);
+				}
+			catch(IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException objException)
+				{
+				objException.printStackTrace(System.err);
+				}
 		
-		setChanged();
-		notifyObservers();
+			addModelObservers();
+		
+			setChanged();
+			notifyObservers();
+			}
 	}
 	
 	public void setWorkingModel(final ModelType objWorkingModel)
