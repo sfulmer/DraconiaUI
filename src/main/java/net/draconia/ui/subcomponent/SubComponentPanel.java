@@ -2,17 +2,23 @@ package net.draconia.ui.subcomponent;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+
 import java.util.Observable;
 
 import javax.annotation.PostConstruct;
+import javax.swing.Action;
 import javax.swing.BorderFactory;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+
 import javax.swing.border.TitledBorder;
 
 import net.draconia.ui.listdetails.ButtonsPanel;
 import net.draconia.ui.listdetails.EnablablePanel;
+
 import net.draconia.ui.subcomponent.actions.Add;
+import net.draconia.ui.subcomponent.actions.Edit;
+import net.draconia.ui.subcomponent.actions.Remove;
 
 public class SubComponentPanel<ModelType extends Observable, SubcomponentType extends Observable> extends EnablablePanel
 {
@@ -20,8 +26,10 @@ public class SubComponentPanel<ModelType extends Observable, SubcomponentType ex
 	
 	private Add<SubcomponentType> mActAdd;
 	private ButtonsPanel mPnlButtons;
+	private Edit<SubcomponentType> mActEdit;
 	private JScrollPane mPnlList;
 	private JTable mTblList;
+	private Remove<SubcomponentType> mActRemove;
 	private String msSubComponentName;
 	private SubComponentTableModel<ModelType, SubcomponentType> mObjTableModel;
 	
@@ -47,6 +55,11 @@ public class SubComponentPanel<ModelType extends Observable, SubcomponentType ex
 		return(mPnlButtons);
 	}
 	
+	protected Edit<SubcomponentType> getEditAction()
+	{
+		return(mActEdit);
+	}
+	
 	protected JScrollPane getListScrollPane()
 	{
 		if(mPnlList == null)
@@ -66,6 +79,11 @@ public class SubComponentPanel<ModelType extends Observable, SubcomponentType ex
 	protected SubComponentTableModel<ModelType, SubcomponentType>  getListTableModel()
 	{
 		return(mObjTableModel);
+	}
+	
+	protected Remove<SubcomponentType> getRemoveAction()
+	{
+		return(mActRemove);
 	}
 	
 	protected String getSubComponentName()
@@ -90,6 +108,8 @@ public class SubComponentPanel<ModelType extends Observable, SubcomponentType ex
 	protected void setButtonPanel(final ButtonsPanel pnlButtons)
 	{
 		mPnlButtons = pnlButtons;
+		
+		mPnlButtons.setButtons(new Action[] {getAddAction(), getEditAction(), getRemoveAction()});
 	}
 	
 	protected void setListScrollPane(final JScrollPane pnlList)
