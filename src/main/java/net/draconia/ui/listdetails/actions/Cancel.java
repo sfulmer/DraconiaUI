@@ -14,7 +14,7 @@ import javax.swing.AbstractAction;
 
 import net.draconia.ui.listdetails.DetailsPanel;
 
-public abstract class Cancel<ModelType extends Observable> extends AbstractAction
+public class Cancel<ModelType extends Observable> extends AbstractAction
 {
 	private static final long serialVersionUID = 8145583039803633458L;
 	

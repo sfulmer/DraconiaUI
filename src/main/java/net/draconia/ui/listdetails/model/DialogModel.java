@@ -39,7 +39,7 @@ public abstract class DialogModel<ModelType extends Observable> extends Observab
 		return(bReturnValue);
 	}
 	
-	public abstract void create();
+	public abstract ModelType create();
 	
 	public List<ModelType> getModelList()
 	{

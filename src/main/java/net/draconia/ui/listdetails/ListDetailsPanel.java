@@ -46,6 +46,9 @@ public class ListDetailsPanel<ModelType extends Observable> extends EnablablePan
 	
 	protected ButtonsPanel getButtonsPanel()
 	{
+		if(mPnlButtons == null)
+			setButtonsPanel(new ButtonsPanel());
+		
 		return(mPnlButtons);
 	}
 	
@@ -83,6 +86,8 @@ public class ListDetailsPanel<ModelType extends Observable> extends EnablablePan
 	protected void setButtonsPanel(final ButtonsPanel pnlButtons)
 	{
 		mPnlButtons = pnlButtons;
+		
+		mPnlButtons.setButtons(new Action[] {getCloseAction()});
 	}
 	
 	protected void setCloseAction(final Close actClose)

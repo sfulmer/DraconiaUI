@@ -1,5 +1,6 @@
 package net.draconia.ui.subcomponent;
 
+import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -10,8 +11,10 @@ import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.TableModel;
 
-public abstract class SubComponentTableModel<ModelType extends Observable, SubcomponentType extends Observable> implements TableModel
+public abstract class SubComponentTableModel<ModelType extends Observable, SubcomponentType extends Observable> implements Serializable, TableModel
 {
+	private static final long serialVersionUID = -6032562071225834425L;
+	
 	private List<TableModelListener> mLstListeners;
 	private ModelType mObjModel;
 	private String msSubcomponentFieldName;
@@ -59,10 +62,18 @@ public abstract class SubComponentTableModel<ModelType extends Observable, Subco
 	}
 	
 	@SuppressWarnings("unchecked")
-	protected List<SubcomponentType> getRows() throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException
+	public List<SubcomponentType> getRows() throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException
 	{
-		Method funcGetter = getModel().getClass().getMethod("get" + getSubcomponentFieldName(), new Class<?>[0]);
-		List<SubcomponentType> lstSubComponents = (List<SubcomponentType>)(funcGetter.invoke(getModel(), new Object[0]));
+		List<SubcomponentType> lstSubComponents;
+		
+		if(getModel() == null)
+			lstSubComponents = new ArrayList<SubcomponentType>();
+		else
+			{
+			Method funcGetter = getModel().getClass().getMethod("get" + getSubcomponentFieldName(), new Class<?>[0]);
+			
+			lstSubComponents = (List<SubcomponentType>)(funcGetter.invoke(getModel(), new Object[0]));
+			}
 		
 		return(lstSubComponents);
 	}

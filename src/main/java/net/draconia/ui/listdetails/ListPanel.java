@@ -5,6 +5,7 @@ import java.awt.LayoutManager;
 
 import java.util.Observable;
 
+import javax.swing.Action;
 import javax.swing.BorderFactory;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -56,6 +57,9 @@ public class ListPanel<ModelType extends Observable> extends EnablablePanel
 	
 	protected ButtonsPanel getButtonsPanel()
 	{
+		if(mPnlButtons == null)
+			setButtonsPanel(new ButtonsPanel());
+		
 		return(mPnlButtons);
 	}
 	
@@ -76,6 +80,9 @@ public class ListPanel<ModelType extends Observable> extends EnablablePanel
 	
 	protected JScrollPane getListScrollPane()
 	{
+		if(mPnlList == null)
+			setListScrollPane(new JScrollPane());
+		
 		return(mPnlList);
 	}
 	
@@ -125,7 +132,12 @@ public class ListPanel<ModelType extends Observable> extends EnablablePanel
 	
 	protected void setButtonsPanel(final ButtonsPanel pnlButtons)
 	{
-		mPnlButtons = pnlButtons;
+		if(pnlButtons == null)
+			mPnlButtons = new ButtonsPanel();
+		else
+			mPnlButtons = pnlButtons;
+		
+		mPnlButtons.setButtons(new Action[] {getNewAction(), getEditAction(), getDeleteAction()});
 	}
 	
 	protected void setDeleteAction(final Delete<ModelType> actDelete)
@@ -145,7 +157,10 @@ public class ListPanel<ModelType extends Observable> extends EnablablePanel
 	
 	protected void setListScrollPane(final JScrollPane pnlList)
 	{
-		mPnlList = pnlList;
+		if(pnlList == null)
+			mPnlList = new JScrollPane();
+		else
+			mPnlList = pnlList;
 		
 		mPnlList.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
 		mPnlList.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);

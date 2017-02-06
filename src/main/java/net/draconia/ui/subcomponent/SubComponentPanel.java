@@ -1,11 +1,12 @@
 package net.draconia.ui.subcomponent;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
-
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.Observable;
 
 import javax.annotation.PostConstruct;
+
 import javax.swing.Action;
 import javax.swing.BorderFactory;
 import javax.swing.JScrollPane;
@@ -19,6 +20,7 @@ import net.draconia.ui.listdetails.EnablablePanel;
 import net.draconia.ui.subcomponent.actions.Add;
 import net.draconia.ui.subcomponent.actions.Edit;
 import net.draconia.ui.subcomponent.actions.Remove;
+import net.draconia.ui.subcomponent.listeners.SubComponentListSelectionListener;
 
 public class SubComponentPanel<ModelType extends Observable, SubcomponentType extends Observable> extends EnablablePanel
 {
@@ -26,7 +28,7 @@ public class SubComponentPanel<ModelType extends Observable, SubcomponentType ex
 	
 	private Add<SubcomponentType> mActAdd;
 	private ButtonsPanel mPnlButtons;
-	private Edit<SubcomponentType> mActEdit;
+	private Edit<ModelType, SubcomponentType> mActEdit;
 	private JScrollPane mPnlList;
 	private JTable mTblList;
 	private Remove<SubcomponentType> mActRemove;
@@ -52,10 +54,17 @@ public class SubComponentPanel<ModelType extends Observable, SubcomponentType ex
 	
 	protected ButtonsPanel getButtonPanel()
 	{
+		if(mPnlButtons == null)
+			{
+			mPnlButtons = new ButtonsPanel(new Action[] {getAddAction(), getEditAction(), getRemoveAction()});
+			
+			mPnlButtons.setEnabled(false);
+			}
+		
 		return(mPnlButtons);
 	}
 	
-	protected Edit<SubcomponentType> getEditAction()
+	protected Edit<ModelType, SubcomponentType> getEditAction()
 	{
 		return(mActEdit);
 	}
@@ -71,7 +80,11 @@ public class SubComponentPanel<ModelType extends Observable, SubcomponentType ex
 	protected JTable getListTable()
 	{
 		if(mTblList == null)
+			{
 			mTblList = new JTable(getListTableModel());
+			
+			mTblList.getSelectionModel().addListSelectionListener(new SubComponentListSelectionListener<>(getListTable(), getEditAction(), getRemoveAction()));
+			}
 		
 		return(mTblList);
 	}
@@ -94,10 +107,43 @@ public class SubComponentPanel<ModelType extends Observable, SubcomponentType ex
 	@PostConstruct
 	protected void initPanel()
 	{
-		setBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.black), getSubComponentName(), TitledBorder.LEFT, TitledBorder.ABOVE_BOTTOM));
+		setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(), getSubComponentName(), TitledBorder.LEFT, TitledBorder.ABOVE_TOP));
 		
 		add(getListScrollPane(), BorderLayout.NORTH);
 		add(getButtonPanel(), BorderLayout.SOUTH);
+		
+		setEnabled(false);
+		
+		for(PropertyChangeListener objPropertyChangeListener : getButtonPanel().getPropertyChangeListeners("enabled"))
+			getButtonPanel().removePropertyChangeListener("enabled",  objPropertyChangeListener);
+		
+		getButtonPanel().addPropertyChangeListener("enabled", new PropertyChangeListener()
+		{
+			public void propertyChange(final PropertyChangeEvent objPropertyChangeEvent)
+			{
+				if(objPropertyChangeEvent.getNewValue().equals(true))
+					{
+					getAddAction().setEnabled(true);
+					
+					if(getListTable().getRowCount() > 0)
+						{
+						getEditAction().setEnabled(getListTable().getSelectedRowCount() == 1);
+						getRemoveAction().setEnabled(getListTable().getSelectedRowCount() > 0);
+						}
+					else
+						{
+						getEditAction().setEnabled(false);
+						getRemoveAction().setEnabled(false);
+						}
+					}
+				else
+					{
+					getAddAction().setEnabled(false);
+					getEditAction().setEnabled(false);
+					getRemoveAction().setEnabled(false);
+					}
+			}
+		});
 	}
 	
 	protected void setAddAction(final Add<SubcomponentType> actAdd)
@@ -110,6 +156,16 @@ public class SubComponentPanel<ModelType extends Observable, SubcomponentType ex
 		mPnlButtons = pnlButtons;
 		
 		mPnlButtons.setButtons(new Action[] {getAddAction(), getEditAction(), getRemoveAction()});
+		
+		mPnlButtons.setEnabled(false);
+		
+	}
+	
+	protected void setEditAction(final Edit<ModelType, SubcomponentType> actEdit)
+	{
+		mActEdit = actEdit;
+		
+		mActEdit.setSubcomponentTable(getListTable());
 	}
 	
 	protected void setListScrollPane(final JScrollPane pnlList)
@@ -131,6 +187,13 @@ public class SubComponentPanel<ModelType extends Observable, SubcomponentType ex
 	protected void setListTableModel(final SubComponentTableModel<ModelType, SubcomponentType> objTableModel)
 	{
 		mObjTableModel = objTableModel;
+	}
+	
+	protected void setRemoveAction(final Remove<SubcomponentType> actRemove)
+	{
+		mActRemove = actRemove;
+		
+		mActRemove.setListTable(getListTable());
 	}
 	
 	protected void setSubComponentName(final String sSubComponentName)

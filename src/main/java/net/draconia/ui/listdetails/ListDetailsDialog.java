@@ -95,4 +95,9 @@ public class ListDetailsDialog<ModelType extends Observable> extends JDialog
 		else
 			mPnlListDetails = pnlListDetails;
 	}
+	
+	protected void setModel(final DialogModel<ModelType> objModel)
+	{
+		mObjModel = objModel;
+	}
 }

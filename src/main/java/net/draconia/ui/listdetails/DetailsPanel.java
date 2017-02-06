@@ -42,6 +42,9 @@ public abstract class DetailsPanel<ModelType extends Observable> extends Enablab
 	
 	protected ButtonsPanel getButtonsPanel()
 	{
+		if(mPnlButtons == null)
+			setButtonsPanel(new ButtonsPanel());
+		
 		return(mPnlButtons);
 	}
 	
@@ -62,6 +65,8 @@ public abstract class DetailsPanel<ModelType extends Observable> extends Enablab
 	{
 		add(getFieldsPanel(), BorderLayout.NORTH);
 		add(getButtonsPanel(), BorderLayout.SOUTH);
+		
+		setEnabled(false);
 	}
 	
 	protected void setApplyAction(final Apply<ModelType> actApply)

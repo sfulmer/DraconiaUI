@@ -1,7 +1,7 @@
 package net.draconia.ui.subcomponent.actions;
 
 import java.awt.event.ActionEvent;
-
+import java.awt.event.KeyEvent;
 import java.util.Observable;
 
 import javax.swing.AbstractAction;
@@ -16,7 +16,13 @@ public class Add<ModelType extends Observable> extends AbstractAction
 	
 	public Add(final ListDetailsDialog<ModelType> dlgNew)
 	{
+		super("Add...");
+		
+		putValue(MNEMONIC_KEY, KeyEvent.VK_A);
+		
 		setNewDialog(dlgNew);
+		
+		setEnabled(false);
 	}
 	
 	public void actionPerformed(final ActionEvent objActionEvent)
