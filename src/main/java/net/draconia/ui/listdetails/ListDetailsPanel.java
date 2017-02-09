@@ -30,6 +30,8 @@ public class ListDetailsPanel<ModelType extends Observable> extends EnablablePan
 		{
 			public void ancestorAdded(final AncestorEvent objAncestorEvent)
 			{
+				mActClose = null;
+				
 				getButtonsPanel().setButtons(new Action[] {getCloseAction()});
 				
 				((Window)(objAncestorEvent.getAncestor())).pack();

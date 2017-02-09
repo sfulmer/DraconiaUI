@@ -1,6 +1,8 @@
 package net.draconia.ui.subcomponent;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.Observable;
@@ -26,13 +28,15 @@ public class SubComponentPanel<ModelType extends Observable, SubcomponentType ex
 {
 	private static final long serialVersionUID = 6182235111430180194L;
 	
-	private Add<SubcomponentType> mActAdd;
+	private Add<ModelType, SubcomponentType> mActAdd;
 	private ButtonsPanel mPnlButtons;
 	private Edit<ModelType, SubcomponentType> mActEdit;
 	private JScrollPane mPnlList;
 	private JTable mTblList;
 	private Remove<SubcomponentType> mActRemove;
 	private String msSubComponentName;
+	private SubComponentPanelModel<ModelType> mObjModel;
+	private SubComponentPanelObserver<ModelType, SubcomponentType> mObjPanelObserver;
 	private SubComponentTableModel<ModelType, SubcomponentType> mObjTableModel;
 	
 	public SubComponentPanel()
@@ -47,7 +51,7 @@ public class SubComponentPanel<ModelType extends Observable, SubcomponentType ex
 		setSubComponentName(sSubComponentName);
 	}
 	
-	protected Add<SubcomponentType> getAddAction()
+	protected Add<ModelType, SubcomponentType> getAddAction()
 	{
 		return(mActAdd);
 	}
@@ -72,7 +76,7 @@ public class SubComponentPanel<ModelType extends Observable, SubcomponentType ex
 	protected JScrollPane getListScrollPane()
 	{
 		if(mPnlList == null)
-			mPnlList = new JScrollPane(getListTable(), JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+			setListScrollPane(new JScrollPane(getListTable(), JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED));
 		
 		return(mPnlList);
 	}
@@ -94,6 +98,19 @@ public class SubComponentPanel<ModelType extends Observable, SubcomponentType ex
 		return(mObjTableModel);
 	}
 	
+	public SubComponentPanelModel<ModelType> getModel()
+	{
+		if(mObjModel == null)
+			setModel(new SubComponentPanelModel<ModelType>());
+		
+		return(mObjModel);
+	}
+	
+	protected SubComponentPanelObserver<ModelType, SubcomponentType> getPanelObserver()
+	{
+		return(mObjPanelObserver);
+	}
+	
 	protected Remove<SubcomponentType> getRemoveAction()
 	{
 		return(mActRemove);
@@ -107,7 +124,7 @@ public class SubComponentPanel<ModelType extends Observable, SubcomponentType ex
 	@PostConstruct
 	protected void initPanel()
 	{
-		setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(), getSubComponentName(), TitledBorder.LEFT, TitledBorder.ABOVE_TOP));
+		setBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.black), getSubComponentName(), TitledBorder.LEFT, TitledBorder.BELOW_TOP));
 		
 		add(getListScrollPane(), BorderLayout.NORTH);
 		add(getButtonPanel(), BorderLayout.SOUTH);
@@ -146,7 +163,7 @@ public class SubComponentPanel<ModelType extends Observable, SubcomponentType ex
 		});
 	}
 	
-	protected void setAddAction(final Add<SubcomponentType> actAdd)
+	protected void setAddAction(final Add<ModelType, SubcomponentType> actAdd)
 	{
 		mActAdd = actAdd;
 	}
@@ -174,6 +191,8 @@ public class SubComponentPanel<ModelType extends Observable, SubcomponentType ex
 			mPnlList = new JScrollPane(getListTable(), JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		else
 			mPnlList = pnlList;
+		
+		mPnlList.setPreferredSize(new Dimension(mPnlList.getPreferredSize().width, (int)(mPnlList.getPreferredSize().height * .6)));
 	}
 	
 	protected void setListTable(final JTable tblList)
@@ -187,6 +206,24 @@ public class SubComponentPanel<ModelType extends Observable, SubcomponentType ex
 	protected void setListTableModel(final SubComponentTableModel<ModelType, SubcomponentType> objTableModel)
 	{
 		mObjTableModel = objTableModel;
+	}
+	
+	protected void setModel(final SubComponentPanelModel<ModelType> objModel)
+	{
+		if(mObjModel != null)
+			mObjModel.deleteObservers();
+		
+		if(objModel == null)
+			mObjModel = new SubComponentPanelModel<ModelType>();
+		else
+			mObjModel = objModel;
+		
+		mObjModel.addObserver(getPanelObserver());
+	}
+	
+	protected void setPanelObserver(final SubComponentPanelObserver<ModelType, SubcomponentType> objPanelObserver)
+	{
+		mObjPanelObserver = objPanelObserver;
 	}
 	
 	protected void setRemoveAction(final Remove<SubcomponentType> actRemove)

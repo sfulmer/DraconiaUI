@@ -24,12 +24,12 @@ public class ListDetailsDialog<ModelType extends Observable> extends JDialog
 	
 	public ListDetailsDialog(final String sTitle, final Window wndOwner)
 	{
-		super(wndOwner, sTitle);
+		super(wndOwner, sTitle.trim() + " Details");
 	}
 	
 	public ListDetailsDialog(final String sTitle, final Window wndOwner, final ModalityType eModalityType)
 	{
-		super(wndOwner, sTitle, eModalityType);
+		super(wndOwner, sTitle.trim() + " Details", eModalityType);
 	}
 	
 	protected ListDetailsPanel<ModelType> getListDetailsPanel()
@@ -57,12 +57,16 @@ public class ListDetailsDialog<ModelType extends Observable> extends JDialog
 	@PostConstruct
 	protected void initDialog()
 	{
+		Dimension szScreen = getToolkit().getScreenSize();
+		
 		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		setLayout(new BorderLayout(5, 5));
 		
 		initControls();
 		
 		pack();
+		
+		setLocation(new Point((szScreen.width - getWidth()) / 2, (szScreen.height - getHeight()) / 2));
 	}
 	
 	public Boolean isCentered()
