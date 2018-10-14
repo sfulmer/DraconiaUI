@@ -203,7 +203,7 @@ public class TextUtilities implements Serializable
 		{
 			Constructor<?> funcCopyConstructor = getValueType().getConstructor(new Class<?>[] {objValue.getClass()});
 			
-			if(!funcCopyConstructor.isAccessible())
+			if(!funcCopyConstructor.canAccess(null))
 				funcCopyConstructor.setAccessible(true);
 			
 			return(funcCopyConstructor.newInstance(new Object[] {objValue}));
