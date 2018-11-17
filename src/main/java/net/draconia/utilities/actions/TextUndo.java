@@ -10,6 +10,7 @@ import javax.swing.KeyStroke;
 import javax.swing.undo.UndoManager;
 
 import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.stereotype.Component;
 
 @Component
@@ -32,10 +33,7 @@ public class TextUndo extends AbstractAction
 	
 	public TextUndo(final UndoManager objUndoManager)
 	{
-		super("Undo");
-		
-		putValue(MNEMONIC_KEY, KeyEvent.VK_U);
-		putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_Z, KeyEvent.CTRL_DOWN_MASK));
+		this();
 		
 		setUndoManager(objUndoManager);
 	}
@@ -61,7 +59,6 @@ public class TextUndo extends AbstractAction
 		mActRedo = actRedo;
 	}
 	
-	@Autowired
 	protected void setUndoManager(final UndoManager objUndoManager)
 	{
 		mObjUndoManager = objUndoManager;

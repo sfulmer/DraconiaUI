@@ -17,10 +17,9 @@ import org.springframework.stereotype.Component;
 public class TextRedo extends AbstractAction
 {
 	private static final long serialVersionUID = 3965383888469417477L;
-	
+
 	@Autowired
 	private TextUndo mActUndo;
-	
 	private UndoManager mObjUndoManager;
 	
 	public TextRedo()
@@ -33,10 +32,7 @@ public class TextRedo extends AbstractAction
 	
 	public TextRedo(final UndoManager objUndoManager)
 	{
-		super("Redo");
-		
-		putValue(MNEMONIC_KEY, KeyEvent.VK_R);
-		putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_Y, KeyEvent.CTRL_DOWN_MASK));
+		this();
 		
 		setUndoManager(objUndoManager);
 	}
@@ -65,12 +61,13 @@ public class TextRedo extends AbstractAction
 		mActUndo = actUndo;
 	}
 	
-	@Autowired
 	protected void setUndoManager(final UndoManager objUndoManager)
 	{
 		mObjUndoManager = objUndoManager;
 		
-		if(objUndoManager != null)
-			setEnabled(mObjUndoManager.canRedo());
+		setEnabled(mObjUndoManager.canRedo());
+		
+		if(getUndoAction() != null)
+			getUndoAction().setEnabled(getUndoManager().canUndo());
 	}
 }
